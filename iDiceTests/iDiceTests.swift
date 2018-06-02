@@ -10,27 +10,51 @@ import XCTest
 @testable import iDice
 
 class iDiceTests: XCTestCase {
-    
-    override func setUp() {
-        super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-    
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
-    }
-    
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
-    
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
+
+    /// Test to see if the distribution is natural for a 2 dice game
+    func testDistribution() {
+        let diceWala = DiceWala()
+        var distribution:[Int:Int] = [:]
+
+        //Rolling the 🎲 lots of times
+        for _ in 0...10_000 {
+            let roll = diceWala.roll()
+            if let existingCount = distribution[roll] {
+                distribution[roll] = existingCount + 1
+            } else {
+                distribution[roll] = 1
+            }
+        }
+
+        //Sorting the rolls by their occurance
+        let sortedRollDistribution = distribution.sorted(by: { (first, second) -> Bool in
+            first.value < second.value
+        })
+
+        //Mapping occurances to a simple sorted array
+        let sortedRolls = sortedRollDistribution.map { (pair) -> Int in
+            pair.key
+        }
+
+        //Checking to see if probability is natural
+        // 2/12 - 3/11 - 4/10 - 5/9 - 6/8 - 💩
+        for i in 0...10 {
+            switch i {
+            case 0, 1:
+                XCTAssert(sortedRolls[i] == 2 || sortedRolls[i] == 12)
+            case 2, 3:
+                XCTAssert(sortedRolls[i] == 3 || sortedRolls[i] == 11)
+            case 4, 5:
+                XCTAssert(sortedRolls[i] == 4 || sortedRolls[i] == 10)
+            case 6, 7:
+                XCTAssert(sortedRolls[i] == 5 || sortedRolls[i] == 9)
+            case 8, 9:
+                XCTAssert(sortedRolls[i] == 6 || sortedRolls[i] == 8)
+            case 10:
+                XCTAssert(sortedRolls[i] == 7)
+            default:
+                break
+            }
         }
     }
-    
 }
