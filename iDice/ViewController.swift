@@ -9,16 +9,27 @@
 import UIKit
 
 class ViewController: UIViewController {
+    @IBOutlet weak var previousRoll: UILabel!
+    @IBOutlet weak var currentRoll: UILabel!
+    let dice = DiceWala()
 
     override func viewDidLoad() {
+        previousRoll.text = ""
+        currentRoll.text = "Tap ↙"
         super.viewDidLoad()
+    }
+
+    @IBAction func roll(_ sender: Any) {
+        let roll = dice.roll()
+        if currentRoll.text != "Tap ↙" {
+            previousRoll.text = currentRoll.text
+        }
+        currentRoll.text = "\(roll)"
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        print("Your dice might explode soon")
     }
-
-
 }
 
